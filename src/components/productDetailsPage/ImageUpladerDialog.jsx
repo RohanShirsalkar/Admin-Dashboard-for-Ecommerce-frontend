@@ -9,15 +9,33 @@ import {
 } from "@/components/ui/dialog";
 import { ChevronRight, Upload, DeleteIcon, Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
-import FormContext from "../../context/FormContext";
 
 import ImageUploading from "react-images-uploading";
+import { uploadProductImages } from "@/services/upload_service";
 
-const ImageUpladerDialog = ({ images, setValue }) => {
+const ImageUpladerDialog = ({ images, setValue, id: productId }) => {
+  const [localImages, setLocalImage] = useState([]);
   const maxNumber = 5;
 
   const onChange = (imageList) => {
-    setValue("images", imageList);
+    // setValue("images", imageList);
+    setLocalImage(imageList);
+  };
+
+  const handleSave = async () => {
+    const imagesFormData = new FormData();
+    console.log("object");
+    imagesFormData.append("productId", productId);
+    localImages.forEach((image) => {
+      imagesFormData.append("image", image.file);
+    });
+    try {
+      const { data } = await uploadProductImages(imagesFormData);
+      setValue("images", data);
+      // show toast with a message;
+    } catch (error) {
+      console.error(`Error: ${error} `);
+    }
   };
 
   return (
@@ -30,7 +48,7 @@ const ImageUpladerDialog = ({ images, setValue }) => {
           <div>
             <ImageUploading
               multiple
-              value={images}
+              value={localImages}
               onChange={onChange}
               maxNumber={maxNumber}
               dataURLKey="data_url"
@@ -49,10 +67,10 @@ const ImageUpladerDialog = ({ images, setValue }) => {
                       All Images
                     </DialogTitle>
                     <div className="space-x-2">
-                      <Button variant="secondary" onClick={onImageRemoveAll}>
-                        Remove All{" "}
+                      <Button variant="secondary" onClick={onImageUpload}>
+                        Upload
                       </Button>
-                      <Button onClick={onImageUpload}>Upload </Button>
+                      <Button onClick={handleSave}>Save</Button>
                     </div>
                   </div>
                   <div className="grid grid-cols-3 gap-2 mt-4">

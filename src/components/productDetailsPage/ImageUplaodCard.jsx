@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-const ImageUplaodCard = ({ getValues, setValue, watch }) => {
+const ImageUplaodCard = ({ getValues, setValue, watch, id }) => {
   const images = getValues("images");
   const watchImages = watch("images");
 
@@ -18,7 +18,7 @@ const ImageUplaodCard = ({ getValues, setValue, watch }) => {
 
   useEffect(() => {
     if (images && images.length > 0) {
-      setPreviewImage(images[0].data_url);
+      setPreviewImage(images[0].url);
     } else {
       setPreviewImage(null);
     }
@@ -45,19 +45,19 @@ const ImageUplaodCard = ({ getValues, setValue, watch }) => {
             {images?.map((image, index) => (
               <div
                 className="max-w-[200px] relative"
-                onClick={() => setPreviewImage(image.data_url)}
+                onClick={() => setPreviewImage(image.url)}
               >
                 <img
                   alt="Product image"
                   className="aspect-square w-full border rounded-md object-cover cursor-pointer hover:scale-110 transition-all duration-300 ease-in-out"
                   height="100px"
-                  src={image.data_url}
+                  src={image.url}
                   width="100px"
                 />
               </div>
             ))}
             <div>
-              <ImageUpladerDialog images={images} setValue={setValue} />
+              <ImageUpladerDialog images={images} setValue={setValue} id={id} />
             </div>
           </div>
         </div>

@@ -36,7 +36,7 @@ const ProductDetailsPage = () => {
   } = useForm({ defaultValues: { status: "DRAFT" } });
 
   useEffect(() => {
-    const makeGetRequest = async () => {
+    const makeHttpRequest = async () => {
       try {
         const { product } = await getProductWithId(id);
         reset({
@@ -45,6 +45,7 @@ const ProductDetailsPage = () => {
           description: product.description,
           id: product.id,
           imageUrl: product.imageurl,
+          images: product.images,
           price: product.price,
           status: product.status,
           stock: product.stock,
@@ -62,18 +63,14 @@ const ProductDetailsPage = () => {
         console.log(error);
       }
     };
-    makeGetRequest();
-
-    // if (basePath === "edit-product") {
-    //   makeGetRequest();
-    // }
+    makeHttpRequest();
   }, [id, reset]);
 
   const onSubmit = async (data) => {
     console.log(data);
     try {
       const response = await updateProductWithID(id, {
-        categoryId: data.category,
+        categoryId: data.category.value,
         title: data.name,
         price: parseInt(data.price),
         description: data.description,
@@ -83,7 +80,7 @@ const ProductDetailsPage = () => {
       });
       setIsProjectSaved("true");
       navigate("/all-products");
-      alert("Product created");
+      alert(`Product ${basePath === "edit-product" ? "Updated" : "Created"}`);
     } catch (error) {
       const parsedError = error.response.data;
       console.log(parsedError);
@@ -97,7 +94,13 @@ const ProductDetailsPage = () => {
 
   const handleGoBack = () => {
     if (!isProjectSaved && basePath !== "edit-product") {
-      alert("You have unsaved changes. Do you want to discard them?");
+      // alert("You have unsaved changes. Do you want to discard them?");
+      const confirmation = confirm(
+        "You have unsaved changes, do you want to discard them?"
+      );
+      if (confirmation) {
+        console.log(id);
+      }
     } else {
       navigate(-1);
     }
@@ -153,11 +156,12 @@ const ProductDetailsPage = () => {
         <div className="flex flex-col gap-4 md:w-[30%]">
           <ProductStatusCard control={control} errors={errors} />
           <ImageUploadCard
+            id={id}
             getValues={getValues}
             setValue={setValue}
             watch={watch}
           />
-          <DeleteProductCard />
+          <DeleteProductCard id={id} />
         </div>
       </div>
     </section>

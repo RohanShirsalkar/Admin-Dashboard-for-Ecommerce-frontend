@@ -23,3 +23,8 @@ export const updateProductWithID = async (id, data) => {
   const response = await api.put(`${endpoint}/${id}`, data);
   return response.data;
 };
+
+export const deleteProductWithId = async (id) => {
+  const response = await api.delete(`${endpoint}/${id}`);
+  return response.data;
+};

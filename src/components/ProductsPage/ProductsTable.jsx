@@ -38,7 +38,11 @@ import {
 import FilterDropdown from "../common/FilterDropdown";
 import { useNavigate } from "react-router-dom";
 import placeholderImg from "../../assets/placeholder.svg";
-import { createNewProduct, getAllProducts } from "@/services/product_service";
+import {
+  createNewProduct,
+  deleteProductWithId,
+  getAllProducts,
+} from "@/services/product_service";
 import dateFormat, { masks } from "dateformat";
 
 const ProductsTable = () => {
@@ -77,8 +81,19 @@ const ProductsTable = () => {
     navigate(`/edit-product/${id}`);
   };
 
-  const handleDelete = (id) => {
-    console.log(id);
+  const handleDelete = async (id) => {
+    const confirmation = confirm("Are you sure?");
+    if (confirmation) {
+      try {
+        const response = await deleteProductWithId(id);
+        const { products } = await getAllProducts();
+        setProductsData(products);
+        alert(`Product deleted successfully: ${response.id}`);
+      } catch (error) {
+        console.log(error);
+        alert("Error deleting product");
+      }
+    }
   };
 
   const handlePrevious = (e) => {
