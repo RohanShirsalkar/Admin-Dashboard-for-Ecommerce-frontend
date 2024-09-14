@@ -10,3 +10,8 @@ export const uploadProductImages = async (formData) => {
   });
   return response.data;
 };
+
+export const deleteProductImageWithID = async (id) => {
+  const response = await api.delete(`${endpoint}/product-images/${id}`);
+  return response.data;
+};

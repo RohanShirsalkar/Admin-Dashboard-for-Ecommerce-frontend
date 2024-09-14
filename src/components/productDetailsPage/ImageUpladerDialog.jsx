@@ -32,6 +32,7 @@ const ImageUpladerDialog = ({ images, setValue, id: productId }) => {
     try {
       const { data } = await uploadProductImages(imagesFormData);
       setValue("images", data);
+      setLocalImage([]);
       // show toast with a message;
     } catch (error) {
       console.error(`Error: ${error} `);

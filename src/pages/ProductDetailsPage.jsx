@@ -13,6 +13,7 @@ import {
   getProductWithId,
   createNewProduct,
   updateProductWithID,
+  deleteProductWithId,
 } from "@/services/product_service";
 import { useForm } from "react-hook-form";
 
@@ -53,10 +54,10 @@ const ProductDetailsPage = () => {
           name: product.title,
           totalSales: product.totalsales,
           updatedate: product.updatedate,
-          tags: product.tags.map((tag) => tag.id),
+          tags: product.tags?.map((tag) => tag.id),
           category: {
-            value: product.category.id,
-            label: product.category.name,
+            value: product.category?.id,
+            label: product.category?.name,
           },
         });
       } catch (error) {
@@ -70,7 +71,7 @@ const ProductDetailsPage = () => {
     console.log(data);
     try {
       const response = await updateProductWithID(id, {
-        categoryId: data.category.value,
+        categoryId: data.category,
         title: data.name,
         price: parseInt(data.price),
         description: data.description,
@@ -92,14 +93,18 @@ const ProductDetailsPage = () => {
     console.log(getValues());
   };
 
-  const handleGoBack = () => {
+  const handleGoBack = async () => {
     if (!isProjectSaved && basePath !== "edit-product") {
-      // alert("You have unsaved changes. Do you want to discard them?");
       const confirmation = confirm(
         "You have unsaved changes, do you want to discard them?"
       );
       if (confirmation) {
-        console.log(id);
+        const response = await deleteProductWithId(id).catch((error) => {
+          console.log("Error", error);
+          alert("Error deleting product, please try again.");
+        });
+        // navigate("/all-products");
+        navigate(-1);
       }
     } else {
       navigate(-1);
