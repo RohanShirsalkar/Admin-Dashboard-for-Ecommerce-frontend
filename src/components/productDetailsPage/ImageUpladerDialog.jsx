@@ -14,7 +14,6 @@ import FormContext from "../../context/FormContext";
 import ImageUploading from "react-images-uploading";
 
 const ImageUpladerDialog = ({ images, setValue }) => {
-  // const { setValue } = useContext(FormContext);
   const maxNumber = 5;
 
   const onChange = (imageList) => {

@@ -38,7 +38,7 @@ import {
 import FilterDropdown from "../common/FilterDropdown";
 import { useNavigate } from "react-router-dom";
 import placeholderImg from "../../assets/placeholder.svg";
-import { getAllProducts } from "@/services/product_service";
+import { createNewProduct, getAllProducts } from "@/services/product_service";
 import dateFormat, { masks } from "dateformat";
 
 const ProductsTable = () => {
@@ -63,6 +63,15 @@ const ProductsTable = () => {
     };
     makeGetRequest();
   }, []);
+
+  const handleAddProduct = async () => {
+    try {
+      const { product } = await createNewProduct();
+      navigate(`/add-product/${product.id}`);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
   const handleEdit = (id) => {
     navigate(`/edit-product/${id}`);
@@ -94,7 +103,7 @@ const ProductsTable = () => {
               ]}
             />
             <Button
-              onClick={() => navigate("/add-product")}
+              onClick={() => handleAddProduct()}
               size="sm"
               className="h-8 gap-1"
             >

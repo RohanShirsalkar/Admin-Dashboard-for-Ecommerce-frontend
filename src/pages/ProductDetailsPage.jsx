@@ -9,7 +9,11 @@ import CategoryCard from "../components/productDetailsPage/CartegoryCard";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import AlertBar from "../components/common/AlertBar";
 import useRouteGuard from "@/hooks/useRouteGuard";
-import { getProductWithId, createNewProduct } from "@/services/product_service";
+import {
+  getProductWithId,
+  createNewProduct,
+  updateProductWithID,
+} from "@/services/product_service";
 import { useForm } from "react-hook-form";
 
 const ProductDetailsPage = () => {
@@ -17,6 +21,8 @@ const ProductDetailsPage = () => {
   const { pathname } = useLocation();
   const basePath = pathname.split("/")[1];
   const navigate = useNavigate();
+
+  const [isProjectSaved, setIsProjectSaved] = useState(false);
 
   const {
     register,
@@ -27,7 +33,7 @@ const ProductDetailsPage = () => {
     setValue,
     watch,
     reset,
-  } = useForm();
+  } = useForm({ defaultValues: { status: "DRAFT" } });
 
   useEffect(() => {
     const makeGetRequest = async () => {
@@ -56,16 +62,17 @@ const ProductDetailsPage = () => {
         console.log(error);
       }
     };
+    makeGetRequest();
 
-    if (basePath === "edit-product") {
-      makeGetRequest();
-    }
+    // if (basePath === "edit-product") {
+    //   makeGetRequest();
+    // }
   }, [id, reset]);
 
   const onSubmit = async (data) => {
     console.log(data);
     try {
-      const response = await createNewProduct({
+      const response = await updateProductWithID(id, {
         categoryId: data.category,
         title: data.name,
         price: parseInt(data.price),
@@ -74,6 +81,8 @@ const ProductDetailsPage = () => {
         stock: 10,
         tags: data.tags,
       });
+      setIsProjectSaved("true");
+      navigate("/all-products");
       alert("Product created");
     } catch (error) {
       const parsedError = error.response.data;
@@ -82,11 +91,16 @@ const ProductDetailsPage = () => {
   };
 
   const handleDiscard = () => {
+    setIsProjectSaved(true);
     console.log(getValues());
   };
 
   const handleGoBack = () => {
-    navigate(-1);
+    if (!isProjectSaved && basePath !== "edit-product") {
+      alert("You have unsaved changes. Do you want to discard them?");
+    } else {
+      navigate(-1);
+    }
   };
 
   useRouteGuard();

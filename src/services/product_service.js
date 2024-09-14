@@ -18,3 +18,8 @@ export const createNewProduct = async (data) => {
   const response = await api.post(endpoint, data);
   return response.data;
 };
+
+export const updateProductWithID = async (id, data) => {
+  const response = await api.put(`${endpoint}/${id}`, data);
+  return response.data;
+};
