@@ -6,6 +6,7 @@ import SettingsPage from "@/pages/SettingsPage";
 import ProductDetailsPage from "@/pages/ProductDetailsPage";
 import Login from "@/pages/Login";
 import Layout from "../layout/Layout";
+import CreatOrderPage from "@/pages/CreatOrderPage";
 import { createBrowserRouter } from "react-router-dom";
 
 const router = createBrowserRouter([
@@ -16,6 +17,7 @@ const router = createBrowserRouter([
       { path: "", element: <Home /> },
       { path: "/login", element: <Login /> },
       { path: "/orders", element: <Orders /> },
+      { path: "/create-order", element: <CreatOrderPage /> },
       { path: "/all-products", element: <ProductsPage /> },
       { path: "/customers", element: <CustomersPage /> },
       { path: "/settings", element: <SettingsPage /> },
