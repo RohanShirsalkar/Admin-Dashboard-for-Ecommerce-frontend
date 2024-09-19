@@ -32,6 +32,8 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import dateFormat from "dateformat";
+import { USDollarCurrency } from "@/lib/utils";
 
 // This contains Sheet and Sheet Trigger as a Table Row.
 const OrderDetailsSheet = ({ order }) => {
@@ -40,34 +42,36 @@ const OrderDetailsSheet = ({ order }) => {
       <SheetTrigger asChild>
         <TableRow>
           <TableCell>
-            <div className="font-medium">{order?.name}</div>
+            <div className="font-medium">{order.user.name}</div>
             <div className="hidden text-sm text-muted-foreground md:inline">
-              {order?.email}
+              {order.user.email}
             </div>
           </TableCell>
           <TableCell className="hidden sm:table-cell">
             <ul>
-              {order?.items.map((item) => (
-                <li className="text-slate-500">
-                  {item.title} x {item.quantity}
+              {order.products.map((product) => (
+                <li key={product.id} className="text-slate-500">
+                  {product.title} x {1}
                 </li>
               ))}
             </ul>
           </TableCell>
           <TableCell className="hidden sm:table-cell">
-            {order?.status === "canceled" && (
+            {order.status === "canceled" && (
               <Badge className="text-xs" variant="destructive">
                 {order.status.toLocaleUpperCase()}
               </Badge>
             )}
-            {order?.status !== "canceled" && (
+            {order.status !== "canceled" && (
               <Badge className="text-xs" variant="outline">
                 {order.status.toLocaleUpperCase()}
               </Badge>
             )}
           </TableCell>
-          <TableCell className="hidden md:table-cell">{order?.date}</TableCell>
-          <TableCell className="text-right">${order?.amount}</TableCell>
+          <TableCell className="hidden md:table-cell">
+            {order.createdate}
+          </TableCell>
+          <TableCell className="text-right">${order?.totalPrice}</TableCell>
         </TableRow>
       </SheetTrigger>
       <SheetContent className="p-0 w-full md:w-auto">
@@ -76,7 +80,8 @@ const OrderDetailsSheet = ({ order }) => {
             <CardHeader className="flex flex-row items-start bg-muted/50 pt-10">
               <div className="grid gap-0.5">
                 <CardTitle className="group flex items-center gap-2 text-lg">
-                  Order {order.id}
+                  <h1 className="font-bold text-2xl">#</h1>
+                  {order.id.slice(0, 10) + "..."}
                   <Button
                     size="icon"
                     variant="outline"
@@ -86,7 +91,9 @@ const OrderDetailsSheet = ({ order }) => {
                     <span className="sr-only">Copy Order ID</span>
                   </Button>
                 </CardTitle>
-                <CardDescription>Date: {order.date}</CardDescription>
+                <CardDescription>
+                  Date: {dateFormat(order.createdate, "paddedShortDate")}
+                </CardDescription>
               </div>
               <div className="ml-auto flex items-center gap-1">
                 {order.status !== "canceled" && (
@@ -119,12 +126,15 @@ const OrderDetailsSheet = ({ order }) => {
               <div className="grid gap-3">
                 <div className="font-semibold">Order Details</div>
                 <ul className="grid gap-3">
-                  {order.items.map((item) => (
-                    <li className="flex items-center justify-between">
+                  {order.products.map((product) => (
+                    <li
+                      key={product.id}
+                      className="flex items-center justify-between"
+                    >
                       <span className="text-muted-foreground">
-                        {item.title} x <span>{item.quantity}</span>
+                        {product.title} x <span>{1}</span>
                       </span>
-                      <span>$ {item.price}.00</span>
+                      <span>{USDollarCurrency.format(product.price)}</span>
                     </li>
                   ))}
                 </ul>
@@ -132,21 +142,19 @@ const OrderDetailsSheet = ({ order }) => {
                 <ul className="grid gap-3">
                   <li className="flex items-center justify-between">
                     <span className="text-muted-foreground">Subtotal</span>
-                    <span>$ {order.amount}.00</span>
+                    <span>{USDollarCurrency.format(order.totalPrice)}</span>
                   </li>
                   <li className="flex items-center justify-between">
                     <span className="text-muted-foreground">Shipping</span>
-                    <span>$ {order.shippingCost}.00</span>
+                    <span>$ 00</span>
                   </li>
                   <li className="flex items-center justify-between">
                     <span className="text-muted-foreground">Tax</span>
-                    <span>$ {order.tax}.00</span>
+                    <span>$ 00</span>
                   </li>
                   <li className="flex items-center justify-between font-semibold">
                     <span className="text-muted-foreground">Total</span>
-                    <span>
-                      $ {order.amount + order.shippingCost + order.tax}.00
-                    </span>
+                    <span>{USDollarCurrency.format(order.totalPrice)}</span>
                   </li>
                 </ul>
               </div>
@@ -155,12 +163,15 @@ const OrderDetailsSheet = ({ order }) => {
                 <div className="grid gap-3">
                   <div className="font-semibold">Shipping Information</div>
                   <address className="grid gap-0.5 not-italic text-muted-foreground">
-                    {order.shippingAddress.split(",").map((str) => (
+                    {/* {order.shippingAddress?.split(",").map((str) => (
                       <span>{str}</span>
-                    ))}
-                    {/* <span>Liam Johnson</span>
-                    <span>1234 Main St.</span>
-                    <span>Anytown, CA 12345</span> */}
+                    ))} */}
+                    <span>{order.deliveryAddress?.street}</span>
+                    <span>{order.deliveryAddress?.city}</span>
+                    <span>
+                      {order.deliveryAddress?.state}{" "}
+                      {order.deliveryAddress?.pinCode}
+                    </span>
                   </address>
                 </div>
                 <div className="grid auto-rows-max gap-3">
@@ -176,18 +187,18 @@ const OrderDetailsSheet = ({ order }) => {
                 <dl className="grid gap-3">
                   <div className="flex items-center justify-between">
                     <dt className="text-muted-foreground">Customer</dt>
-                    <dd>{order.name}</dd>
+                    <dd>{order.user.name}</dd>
                   </div>
                   <div className="flex items-center justify-between">
                     <dt className="text-muted-foreground">Email</dt>
                     <dd>
-                      <a href="mailto:">{order.email}</a>
+                      <a href="mailto:">{order.user.email}</a>
                     </dd>
                   </div>
                   <div className="flex items-center justify-between">
                     <dt className="text-muted-foreground">Phone</dt>
                     <dd>
-                      <a href="tel:">{order.phone}</a>
+                      <a href="tel:">{order.user.phone}</a>
                     </dd>
                   </div>
                 </dl>
@@ -199,16 +210,20 @@ const OrderDetailsSheet = ({ order }) => {
                   <div className="flex items-center justify-between">
                     <dt className="flex items-center gap-1 text-muted-foreground">
                       <CreditCard className="h-4 w-4" />
-                      {order.paymentInformation.cardType}
+                      {order.paymentMethod}
                     </dt>
-                    <dd>{order.paymentInformation.cardNumber}</dd>
+                    {/* <dd>{order.paymentInformation.cardNumber}</dd> */}
                   </div>
                 </dl>
               </div>
             </CardContent>
             <CardFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3">
               <div className="text-xs text-muted-foreground">
-                Updated <time dateTime="2023-11-23">November 23, 2023</time>
+                Updated{" "}
+                <time dateTime="2023-11-23">
+                  {" "}
+                  {dateFormat(order.createdate, "paddedShortDate")}
+                </time>
               </div>
               {/* <Pagination className="ml-auto mr-0 w-auto">
                 <PaginationContent>

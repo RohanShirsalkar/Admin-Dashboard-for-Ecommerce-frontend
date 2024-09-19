@@ -7,6 +7,11 @@ export const getQuickOverviewData = async () => {
   return response.data;
 };
 
+export const getChartData = async () => {
+  const response = await api.get(`${endpoint}/chart-data`);
+  return response.data;
+};
+
 export const getRecentSales = async () => {
   const response = await api.get(`${endpoint}/recent-sales`);
   return response.data;

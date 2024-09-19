@@ -10,19 +10,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ListFilter } from "lucide-react";
 
-const FilterDropdown = ({}) => {
-  const [positions, setPositions] = useState({
-    Completed: true,
-    Cancled: false,
-    Inprogress: false,
-  });
+const FilterDropdown = ({ selectedStatus, setSelectedStatus }) => {
+  const [t, setT] = useState("");
 
-  const togglePosition = (position) => {
-    setPositions((prev) => ({
-      ...prev,
-      [position]: !prev[position],
-    }));
-  };
+  // const togglePosition = (status) => {
+  //   setSelectedStatus((prev) => ({
+  //     ...prev,
+  //     [status]: !prev[status],
+  //   }));
+  // };
 
   return (
     <DropdownMenu>
@@ -36,20 +32,26 @@ const FilterDropdown = ({}) => {
         <DropdownMenuLabel>Order Status</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuCheckboxItem
-          checked={positions.top}
-          onCheckedChange={() => togglePosition("top")}
+          checked={selectedStatus === undefined}
+          onCheckedChange={() => setSelectedStatus(undefined)}
+        >
+          All
+        </DropdownMenuCheckboxItem>
+        <DropdownMenuCheckboxItem
+          checked={selectedStatus === "COMPLETED"}
+          onCheckedChange={() => setSelectedStatus("COMPLETED")}
         >
           Completed
         </DropdownMenuCheckboxItem>
         <DropdownMenuCheckboxItem
-          checked={positions.bottom}
-          onCheckedChange={() => togglePosition("bottom")}
+          checked={selectedStatus === "CANCLED"}
+          onCheckedChange={() => setSelectedStatus("CANCLED")}
         >
           Cancled
         </DropdownMenuCheckboxItem>
         <DropdownMenuCheckboxItem
-          checked={positions.right}
-          onCheckedChange={() => togglePosition("right")}
+          checked={selectedStatus === "INPROGRESS"}
+          onCheckedChange={() => setSelectedStatus("INPROGRESS")}
         >
           Inprogress
         </DropdownMenuCheckboxItem>

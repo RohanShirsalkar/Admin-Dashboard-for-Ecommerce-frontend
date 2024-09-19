@@ -1,4 +1,5 @@
-import React from "react";
+import { getChartData } from "@/services/dashboard_service";
+import React, { useEffect, useState } from "react";
 import {
   Bar,
   BarChart,
@@ -9,24 +10,39 @@ import {
   LabelList,
 } from "recharts";
 
-const chartData = [
-  { day: "Sunday", desktop: 18 },
-  { day: "Monday", desktop: 30 },
-  { day: "Tuesday", desktop: 23 },
-  { day: "Wednesday", desktop: 13 },
-  { day: "Thursday", desktop: 20 },
-  { day: "Friday", desktop: 0 },
-  { day: "Saturday", desktop: 15 },
-];
+// const chartData = [
+//   { day: "Sunday", desktop: 18 },
+//   { day: "Monday", desktop: 30 },
+//   { day: "Tuesday", desktop: 23 },
+//   { day: "Wednesday", desktop: 13 },
+//   { day: "Thursday", desktop: 20 },
+//   { day: "Friday", desktop: 0 },
+//   { day: "Saturday", desktop: 15 },
+// ];
 
 const OrdersChart = () => {
+  const [chartData, setChartData] = useState([]);
+
+  useEffect(() => {
+    const makeHttpRequest = async () => {
+      try {
+        const { sales } = await getChartData();
+        console.log(sales);
+        setChartData(sales);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    makeHttpRequest();
+  }, []);
+
   return (
     <div className="w-full max-w-2xl mx-auto p-6 bg-white border shadow-sm rounded-lg">
       <h2 className="text-2xl font-semibold mb-2">Orders</h2>
       <p className="text-sm text-gray-600 mb-6">This Week</p>
       <div className="w-full h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={chartData}>
+          <BarChart data={chartData && chartData}>
             <CartesianGrid vertical={false} strokeDasharray="3 3" />
             <XAxis
               dataKey="day"
@@ -45,7 +61,7 @@ const OrdersChart = () => {
                   "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
               }}
             />
-            <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4}>
+            <Bar dataKey="sales" fill="var(--color-desktop)" radius={4}>
               <LabelList
                 position="top"
                 offset={12}
