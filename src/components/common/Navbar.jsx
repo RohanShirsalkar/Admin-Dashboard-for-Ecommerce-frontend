@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -11,13 +11,22 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { CircleUser, Menu, Package2, Search } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { UserContext } from "@/context/UserContext";
 
 const Navbar = () => {
+  const { logoutUser } = useContext(UserContext);
+  const navigate = useNavigate();
+
   const handleActiveLink = ({ isActive }) => {
     return isActive
       ? "text-black"
       : "text-muted-foreground transition-colors hover:text-foregroun";
+  };
+
+  const handleLogout = () => {
+    logoutUser();
+    navigate("/login");
   };
 
   return (
@@ -127,7 +136,7 @@ const Navbar = () => {
               <DropdownMenuItem>Settings</DropdownMenuItem>
               <DropdownMenuItem>Support</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Logout</DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

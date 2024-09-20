@@ -10,16 +10,6 @@ import {
   LabelList,
 } from "recharts";
 
-// const chartData = [
-//   { day: "Sunday", desktop: 18 },
-//   { day: "Monday", desktop: 30 },
-//   { day: "Tuesday", desktop: 23 },
-//   { day: "Wednesday", desktop: 13 },
-//   { day: "Thursday", desktop: 20 },
-//   { day: "Friday", desktop: 0 },
-//   { day: "Saturday", desktop: 15 },
-// ];
-
 const OrdersChart = () => {
   const [chartData, setChartData] = useState([]);
 

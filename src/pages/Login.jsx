@@ -4,10 +4,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
+import { login } from "@/services/user_services";
 
 const Login = () => {
-  const { setIsLoggedIn, access, setAccess, previousPath } =
-    useContext(UserContext);
+  const { loginUser, previousPath } = useContext(UserContext);
 
   const navigate = useNavigate();
 
@@ -20,12 +20,20 @@ const Login = () => {
     setUserDetails({ ...userDetails, [e.target.type]: e.target.value });
   };
 
-  const handleLogin = () => {
-    setIsLoggedIn(true);
-    if (previousPath) {
-      navigate(previousPath);
-    } else {
-      navigate("/");
+  const handleLogin = async () => {
+    try {
+      const { admin } = await login({
+        email: userDetails.email,
+        password: userDetails.password,
+      });
+      loginUser(admin);
+      if (previousPath) {
+        navigate(previousPath);
+      } else {
+        navigate("/");
+      }
+    } catch (error) {
+      console.log("login error", error);
     }
   };
 
